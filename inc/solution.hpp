@@ -6,7 +6,7 @@
 class Solution
 {
     public:
-        int maximalSubregion(std::vector<std::vector<char>>&, int);
+        int maximalSubregion(std::vector<std::vector<char>>&/* , int */);
         int maximalRectangle(std::vector<std::vector<char>>&);
 };
 
