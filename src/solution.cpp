@@ -5,8 +5,11 @@
 int Solution::maximalRectangle(std::vector<std::vector<char>>& matrix)
 {
     int rows = matrix.size(), cols = matrix[0].size(), area = rows*cols;
+    if(area == 1){ return (int) (matrix[0][0] == '1'); }
+
+    // check whether matrix is all ones / all zeros
     bool allOnes{true}, allZeros{false};
-    for(auto row : matrix)    // check whether matrix is all ones / all zeros
+    for(auto row : matrix)
     {
         if( !std::all_of(row.begin(), row.end(), [](const char& c){ return c == '1'; }) ){ allOnes = false; }
         if( std::all_of(row.begin(), row.end(), [](const char& c){ return c == '0'; }) ){ allZeros = true; }
@@ -32,16 +35,12 @@ int Solution::maximalRectangle(std::vector<std::vector<char>>& matrix)
             for(int row{1}; row < rows; ++row){ bottom[row-1][col] = matrix[row][col]; }
         }
     }
+
     // recursive call with appropriate matrices
     if(cols>1 && rows>1)
     {
         return std::max({maximalRectangle(left), maximalRectangle(right), maximalRectangle(top), maximalRectangle(bottom)});
     }
-    else if(cols>1 || rows>1)
-    {
-        return (cols>1)
-            ? std::max({maximalRectangle(left), maximalRectangle(right)})
-            : std::max({maximalRectangle(top),  maximalRectangle(bottom)});
-    }
-    else{ return (int) matrix[0][0]; }
+    return (cols>1) ? std::max({maximalRectangle(left), maximalRectangle(right)})
+                    : std::max({maximalRectangle(top),  maximalRectangle(bottom)});
 }
