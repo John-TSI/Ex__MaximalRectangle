@@ -5,12 +5,14 @@
 int Solution::maximalSubregion(std::vector<std::vector<char>>& matrix/* , int maxArea */)
 {
     int rows = matrix.size(), cols = matrix[0].size(), area = rows*cols;
-    bool allOnes{true};
+    bool allOnes{true}, allZeros{false};
     for(auto row : matrix)
     {
-        if( !std::all_of(row.begin(), row.end(), [](const char& c){ return c == '1'; }) ){ allOnes = false; break; }
+        if( !std::all_of(row.begin(), row.end(), [](const char& c){ return c == '1'; }) ){ allOnes = false; /* break; */ }
+        if( std::all_of(row.begin(), row.end(), [](const char& c){ return c == '0'; }) ){ allZeros = true; /* break; */ }
     }
-    if(allOnes/*  && area > maxArea */){ return area; } 
+    if(allOnes/*  && area > maxArea */){ return area; }
+    if(allZeros/*  && area > maxArea */){ return 0; } 
     
     // generate the four subregions and recursively call maximalSubregion for each
     std::vector<std::vector<char>> left(rows,std::vector<char>(cols-1));
@@ -35,15 +37,19 @@ int Solution::maximalSubregion(std::vector<std::vector<char>>& matrix/* , int ma
     }
     if(cols>1 && rows>1)
     {
-        return std::max({maximalSubregion(left/* ,maxArea */), maximalSubregion(right/* ,maxArea */), maximalSubregion(top/* ,maxArea */), maximalSubregion(bottom/* ,maxArea */)});
+        int leftArea = maximalSubregion(left/* ,maxArea */), rightArea = maximalSubregion(right/* ,maxArea */);
+        int topArea = maximalSubregion(top/* ,maxArea */), bottomArea = maximalSubregion(bottom/* ,maxArea */);
+        return std::max({leftArea,rightArea,topArea,bottomArea});
     }
     else if(cols>1)
     {
-        return std::max({maximalSubregion(left/* ,maxArea */), maximalSubregion(right/* ,maxArea */)});
+        int leftArea = maximalSubregion(left/* ,maxArea */), rightArea = maximalSubregion(right/* ,maxArea */);
+        return std::max({leftArea, rightArea});
     }
     else if(rows>1)
     {
-        return std::max({maximalSubregion(top/* ,maxArea */), maximalSubregion(bottom/* ,maxArea */)});
+        int topArea = maximalSubregion(top/* ,maxArea */), bottomArea = maximalSubregion(bottom/* ,maxArea */);
+        return std::max({topArea, bottomArea});
     }
     else{ return (int) matrix[0][0]; }
 }
