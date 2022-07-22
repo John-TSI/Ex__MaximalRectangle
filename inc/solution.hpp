@@ -7,6 +7,7 @@ class Solution
 {
     public:
         int maximalRectangle(std::vector<std::vector<char>>&);
+        int maximalRectangle2(std::vector<std::vector<char>>&);
 };
 
 #endif // SOLUTION_HPP

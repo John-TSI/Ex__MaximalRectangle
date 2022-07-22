@@ -1,7 +1,9 @@
 #include<algorithm>
+#include<stack>
 #include"../inc/solution.hpp"
 
 
+// SOLUTION ONE: RECURSION
 int Solution::maximalRectangle(std::vector<std::vector<char>>& matrix)
 {
     int rows = matrix.size(), cols = matrix[0].size(), area = rows*cols;
@@ -43,4 +45,35 @@ int Solution::maximalRectangle(std::vector<std::vector<char>>& matrix)
     }
     return (cols>1) ? std::max({maximalRectangle(left), maximalRectangle(right)})
                     : std::max({maximalRectangle(top),  maximalRectangle(bottom)});
+}
+
+
+// SOLUTION TWO: ACCUMULATION AND STACK
+int Solution::maximalRectangle2(std::vector<std::vector<char>>& matrix)
+{
+    int rows = matrix.size(), cols = matrix[0].size(), maxArea{0};
+    if(rows*cols == 1){ return (int) (matrix[0][0] == '1'); }
+    std::vector<int> rowData(cols,0);
+
+    for(int row{0}; row<rows; ++row)
+    {
+        std::stack<int> idxStack{{-1}};
+        for(int col{0}; col<cols; ++col)
+        { 
+            rowData[col] += (matrix[row][col] - '0');
+            
+            if(idxStack.top() == -1 || rowData[col] >= rowData[idxStack.top()]){ idxStack.push(col); }
+            else
+            {
+                while(idxStack.top() != -1 && rowData[idxStack.top()] >= rowData[col])
+                {
+                    int currIdx = idxStack.top(); idxStack.pop(); int leftIdx = idxStack.top(); 
+                    int area = rowData[currIdx]*(col - leftIdx - 1);
+                    if(area > maxArea){ maxArea = area; }
+                }
+                idxStack.push(col);
+            } 
+        }
+    }
+    return maxArea;
 }
